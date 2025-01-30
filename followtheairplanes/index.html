@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gioco degli Aerei 3.0</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .controls {
+            margin: 20px;
+            gap: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        #gameArea {
+            position: relative;
+            width: 90vw;
+            height: 60vh;
+            border: 2px solid #333;
+            margin: 20px;
+            overflow: hidden;
+        }
+        .airplane {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            color: white;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #alert {
+            display: none; /* Nascondi l'alert di default */
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #f44336; /* Rosso */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000; /* Assicurati che sia sopra altri elementi */
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <input type="number" id="sInput" placeholder="Dimensione aerei" min="1" value="50">
+        <input type="number" id="nInput" placeholder="Numero di aerei" min="1" value="3">
+        <input type="number" id="tInput" placeholder="Tempo in secondi" min="1" value="10">
+        <button onclick="startGame()">Avvia Gioco</button>
+    </div>
+    <div id="gameArea"></div>
+ <div id="alert">Questo è un alert che scompare!</div>
+    <script>
+        let gameActive = false;
+        let gameCheck = false;
+        let clickingEnabled = false;
+        let expectedClick = 1;
+        const V_MIN = 0;
+        const V_MAX = 3;
+        let bhInterval;
+
+        class Airplane {
+            constructor(number, x, y, gameArea) {
+                this.element = document.createElement('div');
+               
+                this.element.className = 'airplane';
+                this.element.textContent = number;
+                this.element.dataset.number = number;
+                this.gameArea = gameArea;
+                
+                // Posizione iniziale buco nero
+                this.bhX = Math.random() * (gameArea.offsetWidth - 50)*2-(gameArea.offsetWidth - 50)/2;
+                this.bhY = Math.random() * (gameArea.offsetHeight - 50)*2-(gameArea.offsetWidth - 50)/2;
+                
+                // Velocità iniziale
+                this.vx = (Math.random() * V_MAX ) * (Math.random() > 0.5 ? 1 : -1);
+                this.vy = (Math.random() * V_MAX ) * (Math.random() > 0.5 ? 1 : -1);
+                
+                this.element.style.left = x + 'px';
+                this.element.style.top = y + 'px';
+            }
+        }
+draw();
+        document.getElementById('nInput').addEventListener('input', draw);
+        document.getElementById('sInput').addEventListener('input', draw);
+          document.getElementById('tInput').addEventListener('input', draw);
+
+
+        function draw() {
+            const n = parseInt(document.getElementById('nInput').value);
+           const s = parseInt(document.getElementById('sInput').value);
+       //   const s='24px';
+            
+            const gameArea = document.getElementById('gameArea');
+            
+            initialPositions = [];
+            const areaWidth = gameArea.offsetWidth-s;
+            const areaHeight = gameArea.offsetHeight-s;
+            if(n*s> gameArea.offsetWidth){showAlert("gli aerei sono troppo grandi");gameCheck=false;return; }
+            //else{gameCheck=true;}
+            for(let i = 0; i < n; i++) {
+                const x = i*areaWidth/(n-1);
+                const y = areaHeight/2;
+                initialPositions.push({x, y});
+            }
+
+            airplanes = [];
+            gameArea.innerHTML = '';
+            for(let i = 0; i < n; i++) {
+                const airplane = new Airplane(i + 1, initialPositions[i].x, initialPositions[i].y, gameArea);
+                airplane.element.style.width =s+'px';  
+               airplane.element.style.height = s+'px';
+                airplane.element.style.fontSize = 2*s/3 + 'px';
+                gameArea.appendChild(airplane.element);
+
+                airplanes.push(airplane);
+            }
+        }
+
+        function startGame() {
+          if(gameCheck){ alert("Glia aerei sono troppo grandi");return;}
+            gameActive = false;
+            clickingEnabled = false;
+            expectedClick = 1;
+            clearInterval(bhInterval);
+            document.getElementById('gameArea').innerHTML = '';
+            
+            const t = parseInt(document.getElementById('tInput').value);
+            draw();
+          
+            setTimeout(() => {
+                gameActive = true;
+                
+                // Aggiorna posizione buchi neri ogni secondo
+                bhInterval = setInterval(() => {
+                    airplanes.forEach(airplane => {
+                        airplane.bhX = Math.random() * (airplane.gameArea.offsetWidth - 50);
+                        airplane.bhY = Math.random() * (airplane.gameArea.offsetHeight - 50);
+                        
+                    });
+                }, 1000);
+
+                animate();
+                
+                setTimeout(() => {
+                    airplanes.forEach(a => a.element.style.color = 'transparent');
+                }, 2000);
+            }, 100);
+
+            setTimeout(() => {
+                gameActive = false;
+                clickingEnabled = true;
+                clearInterval(bhInterval);
+                airplanes.forEach(a => {
+                    a.vx = 0;
+                    a.vy = 0;
+                    a.element.onclick = handleClick;
+                });
+            }, (t + 2) * 1000);
+        }
+
+        function animate() {
+                     const s = parseInt(document.getElementById('sInput').value);
+
+          
+            if(!gameActive) return;
+
+            airplanes.forEach((airplane, i) => {
+    let x = parseFloat(airplane.element.style.left);
+    let y = parseFloat(airplane.element.style.top);
+
+    // Calcola attrazione verso il buco nero
+    const dx = airplane.bhX - x;
+    const dy = airplane.bhY - y;
+    const d = dx * dx + dy * dy;
+    let G = 0.1;
+
+    // Controlla collisioni con altri aerei
+    for (let j = i + 1; j < airplanes.length; j++) {
+        const otherAirplane = airplanes[j];
+        const otherX = parseFloat(otherAirplane.element.style.left);
+        const otherY = parseFloat(otherAirplane.element.style.top);
+
+        // Distanza tra i due aerei
+        const distanceX = x - otherX;
+        const distanceY = y - otherY;
+        const distanceSquared = distanceX * distanceX + distanceY * distanceY;
+
+        // Se la distanza è inferiore a un certo valore (es. 2500 = 50px * 50px)
+        if (distanceSquared < s*s) {
+            // Rimbalzo tra aerei
+            const angle = Math.atan2(distanceY, distanceX);
+            const speed1 = Math.sqrt(airplane.vx * airplane.vx + airplane.vy * airplane.vy);
+            const speed2 = Math.sqrt(otherAirplane.vx * otherAirplane.vx + otherAirplane.vy * otherAirplane.vy);
+
+            // Inverti le velocità relative
+            airplane.vx = speed2 * Math.cos(angle);
+            airplane.vy = speed2 * Math.sin(angle);
+            otherAirplane.vx = -speed1 * Math.cos(angle);
+            otherAirplane.vy = -speed1 * Math.sin(angle);
+
+            // Disattiva gravità durante il rimbalzo
+            G = 0;
+        }
+    }
+
+    // Applica attrazione gravitazionale
+    airplane.vx += dx * G / Math.sqrt(d);
+    airplane.vy += dy * G / Math.sqrt(d);
+
+    // Limita la velocità massima
+    airplane.vx = Math.sign(airplane.vx) * Math.min(Math.abs(airplane.vx), V_MAX);
+    airplane.vy = Math.sign(airplane.vy) * Math.min(Math.abs(airplane.vy), V_MAX);
+
+    // Rimbalzo sui bordi
+    const maxX = airplane.gameArea.offsetWidth - s;
+    const maxY = airplane.gameArea.offsetHeight - s;
+
+    if (x < 0 || x > maxX) {
+        airplane.vx = -airplane.vx;
+        x = x < 0 ? 0 : maxX;
+    }
+
+    if (y < 0 || y > maxY) {
+        airplane.vy = -airplane.vy;
+        y = y < 0 ? 0 : maxY;
+    }
+
+    // Aggiorna posizione
+     x += (airplane.vx+dx * G/d);
+     y += (airplane.vy+dy * G/d);
+    airplane.element.style.left = x + 'px';
+    airplane.element.style.top = y + 'px';
+
+    // Aggiorna posizione del buco nero (fittizio)
+   
+});
+
+            requestAnimationFrame(animate);
+        }
+
+        function handleClick() {
+            if(!clickingEnabled) return;
+            
+            const clickedNumber = parseInt(this.dataset.number);
+            if(clickedNumber === expectedClick) {
+             // alert(clickedNumber);
+                this.style.backgroundColor = '#2ecc71';
+                this.style.color = 'white';
+                expectedClick++;
+                
+                if(expectedClick > airplanes.length) {
+          setTimeout(() => {alert('Complimenti! Hai vinto!');resetPositions();},100);
+            
+                    
+                    
+                    
+                }
+            } else {
+                alert('Hai sbagliato ordine! Game Over!');
+                resetPositions();
+            }
+        }
+
+        function resetPositions() {
+            clickingEnabled = false;
+       
+            airplanes.sort((a, b) => a.element.dataset.number - b.element.dataset.number);
+                      airplanes.forEach((airplane, index) => {
+              airplane.element.style.backgroundColor = '#e74c3c';
+              airplane.element.style.color = 'white';
+           });
+            
+            
+         setTimeout(() => {
+ 
+            airplanes.forEach((airplane, index) => {
+                setTimeout(() => {
+                    airplane.element.style.transition = 'all 0.5s';
+                    airplane.element.style.left = initialPositions[index].x + 'px';
+                    airplane.element.style.top = initialPositions[index].y + 'px';
+                   
+                }, index * 500);
+            });
+           
+         }, 3000);
+         
+         
+  
+        }
+        
+        
+        function showAlert(message) {
+            const alertBox = document.getElementById('alert');
+            alertBox.textContent = message; // Imposta il messaggio
+            alertBox.style.display = 'block'; // Mostra l'alert
+
+            // Nascondi l'alert dopo 3 secondi
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
