@@ -118,7 +118,7 @@ draw();
             const areaWidth = gameArea.offsetWidth-s;
             const areaHeight = gameArea.offsetHeight-s;
             if(n*s> gameArea.offsetWidth){showAlert("gli aerei sono troppo grandi");gameCheck=false;return; }
-            //else{gameCheck=true;}
+            else{gameCheck=true;}
             for(let i = 0; i < n; i++) {
                 const x = i*areaWidth/(n-1);
                 const y = areaHeight/2;
