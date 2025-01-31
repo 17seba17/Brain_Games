@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Gioco degli Aerei 3.0</title>
+    <title>Airplane game</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -10,17 +10,17 @@
             align-items: center;
         }
         .controls {
-            margin: 20px;
+            margin: 10px;
             gap: 10px;
             display: flex;
             flex-wrap: wrap;
         }
         #gameArea {
             position: relative;
-            width: 90vw;
-            height: 60vh;
+            width: 80vw;
+            height: 80vh;
             border: 2px solid #333;
-            margin: 20px;
+            margin: 10px;
             overflow: hidden;
         }
         .airplane {
@@ -67,7 +67,7 @@
         <input type="number" id="sInput" placeholder="Dimensione aerei" min="1" value="50">
         <input type="number" id="nInput" placeholder="Numero di aerei" min="1" value="3">
         <input type="number" id="tInput" placeholder="Tempo in secondi" min="1" value="10">
-        <button onclick="startGame()">Avvia Gioco</button>
+        <button onclick="startGame()">Start</button>
     </div>
     <div id="gameArea"></div>
  <div id="alert">Questo è un alert che scompare!</div>
@@ -117,8 +117,7 @@ draw();
             initialPositions = [];
             const areaWidth = gameArea.offsetWidth-s;
             const areaHeight = gameArea.offsetHeight-s;
-            if(n*s> gameArea.offsetWidth){showAlert("gli aerei sono troppo grandi");gameCheck=false;return; }
-            else{gameCheck=true;}
+            
             for(let i = 0; i < n; i++) {
                 const x = i*areaWidth/(n-1);
                 const y = areaHeight/2;
@@ -136,10 +135,13 @@ draw();
 
                 airplanes.push(airplane);
             }
+            
+            if(n*s> gameArea.offsetWidth){showAlert("The airplanes are too big!");gameCheck=false; }
+            else{gameCheck=true;}
         }
 
         function startGame() {
-          if(gameCheck){ alert("Glia aerei sono troppo grandi");return;}
+          if(!gameCheck){ alert("The airplanes are too big!");return;}
             gameActive = false;
             clickingEnabled = false;
             expectedClick = 1;
