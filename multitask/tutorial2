@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gioco delle Equazioni</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+        .button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Gioco delle Equazioni</h1>
+<button id="startButton">Start</button>
+
+<div id="equation" style="margin-top: 20px;"></div>
+
+<div id="buttonsContainer" style="display: none;"></div>
+<div id="result" style="margin-top: 20px;"></div>
+
+<table id="variablesTable" style="display: none;">
+    <tr>
+        <th>A</th>
+        <th>B</th>
+        <th>C</th>
+        <th>D</th>
+        <th>E</th>
+       
+    </tr>
+    
+</table>
+<p id="score">Score: 0</p>
+
+<script src="main.js"></script>
+</body>
+</html>
