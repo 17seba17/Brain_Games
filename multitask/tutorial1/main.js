@@ -66,7 +66,7 @@ button.innerText = 'on/off' ;
        
             gameActive = true;
             const rrr=Math.random() < 0.5 ? 0 : 1;
-            const lll=(n === 2) ? rrr : 0;
+            const lll=(n >= 2) ? rrr : 0;
 
             const numLightsToChange = Math.min(2, n) -lll;
 
