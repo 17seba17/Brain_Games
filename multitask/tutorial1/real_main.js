@@ -90,7 +90,7 @@ for (let i = 0; i < stats.nome.length; i++) {
     statItem.appendChild(statName);
 
     const statValue = document.createElement('span');
-    statValue.textContent = `${stats.valori[i]}${stats.unita[i]}`;
+    statValue.textContent = `${Math.floor(stats.valori[i])}${stats.unita[i]}`;
     statValue.style.color = stats.colore[i];
     statItem.appendChild(statValue);
 
