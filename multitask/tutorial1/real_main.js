@@ -27,6 +27,8 @@ function iniziaTask(){
   let indexchosen=validIndex[ran];
  let mytask= allTasks[indexchosen];
   statusTasks[indexchosen]=1;
+  document.getElementById('status'+indexchosen).textContent = '🕓';
+  document.getElementById('status'+indexchosen).classList.replace('inactive', 'active');
   mytask.inizia();
   
 
@@ -183,6 +185,8 @@ document.getElementById('score').innerText = `Score: ${money}`;
 if(!ontime&&unfinishedTasks==allTasks.length){resetAllTasks();}
 else{
 statusTasks[index]=0;
+  document.getElementById('status'+index).textContent = '❄️';
+  document.getElementById('status'+indexchosen).classList.replace('active', 'inactive');
 iniziaTask();}
 
 
