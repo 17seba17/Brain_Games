@@ -1,4 +1,4 @@
-const div=document.getElementById('main_div');
+const div=document.getElementById('div0');
 const style = document.createElement('style');
 
 style.textContent = `
