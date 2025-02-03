@@ -186,7 +186,7 @@ if(!ontime&&unfinishedTasks==allTasks.length){resetAllTasks();}
 else{
 statusTasks[index]=0;
   document.getElementById('status'+index).textContent = '❄️';
-  document.getElementById('status'+indexchosen).classList.replace('active', 'inactive');
+  document.getElementById('status'+index).classList.replace('active', 'inactive');
 iniziaTask();}
 
 
