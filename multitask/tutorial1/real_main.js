@@ -46,7 +46,7 @@ iniziaTask();
 
 function resetAllTasks(){
   for(let i=0;i<allTasks.length;i++){
-    allTasks[i].clear();
+   
     document.getElementById('div'+i).classList.replace('visible', 'hidden');
   }
 
