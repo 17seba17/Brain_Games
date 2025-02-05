@@ -2,6 +2,7 @@
     constructor() {
       
   this.timer;
+  this.mytimer;
   this.score=24000;
   this.lvl=1;
       this.stats = {
@@ -19,6 +20,10 @@ getStats(){
 }
 
     inizia() {
+       this.mytimer=setTimeout(() => {
+       avvisa(1, false);
+    }, 5000);
+      
      const mydiv=document.getElementById('div1');
 mydiv.innerHTML = "<span id='status1'></span> <a href='https://17seba17.github.io/Brain_Games/multitask/tutorial1/'>&#128712;</a>";
 
@@ -129,7 +134,8 @@ button.style.cursor = 'pointer';
            button.className = 'button';
         
             button.onclick = function() {
-       
+           clearTimeout(self.mytimer);
+
 let check=true;
              for(let j=0;j<5;j++){
              
@@ -163,7 +169,7 @@ let check=true;
                 }
                 self.stats.valori[2]=self.lvl;
                 self.stats.soldi= self.stats.valori[4]+ self.stats.valori[5];
-              avvisa(1, ontime);
+         if(ontime) { avvisa(1, ontime);}
             };
             buttonsContainer.appendChild(button);
            
