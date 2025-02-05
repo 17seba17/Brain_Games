@@ -1,25 +1,17 @@
-/* Stile generale per i container */
 .container {
     border: 2px solid #000; /* Bordo nero di 2px */
     padding: 10px; /* Spazio interno */
     margin: 10px 0; /* Margine sopra e sotto */
-    width: 200px; /* Larghezza del div */
     text-align: left; /* Allinea il testo a sinistra */
     display: flex;
     align-items: flex-start; /* Allinea il testo in alto */
+    transition: opacity 0.3s ease; /* Transizione per l'opacità */
 }
 
-/* Stile per il testo con classe status */
-.status {
-    font-weight: bold; /* Testo in grassetto */
+.hidden {
+    display: none;
 }
 
-/* Stile per lo stato active */
-.status.active {
-    color: green; /* Testo verde quando active */
-}
-
-/* Stile per lo stato inactive */
-.status.inactive {
-    color: red; /* Testo rosso quando inactive */
+.visible {
+    display: flex;
 }
