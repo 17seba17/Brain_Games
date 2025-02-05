@@ -171,7 +171,7 @@ getStats(){
         if(delta>4950){ontime=false;}
         else{
          
-          if(correct){  this.stats.valori[4]=(this.stats.valori[4]*this.stats.valori[2]+(5000-delta))/(this.stats.valori[2]+1); this.stats.valori[2]++;}
+          if(correct){  this.stats.valori[4]=(this.stats.valori[4]*this.stats.valori[1]+(5000-delta))/(this.stats.valori[1]+1); this.stats.valori[2]++;}
           this.stats.valori[1]++;
        }
         this.stats.valori[0]++;
