@@ -180,7 +180,7 @@ getStats(){
      if(correct){this.stats.valori[5]+=delta;showMoney(delta);}
      else{this.stats.valori[6]-=5000;showMoney(-5000);}
      this.stats.soldi=this.stats.valori[5]+this.stats.valori[6];
-        avvisa(0, ontime);
+        avvisa(0, ontime, true);
        
     }
 
