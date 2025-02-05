@@ -180,7 +180,7 @@ for (let i = 0; i < allTasks.length; i++) {
 }
 
 
-function avvisa(index, ontime){
+function avvisa(index, ontime, done){
   
  
 let unfinishedTasks=0;let money=0;;
@@ -191,11 +191,11 @@ for(let i=0;i<allTasks.length;i++){
 document.getElementById('score').innerText = `Score: ${money}`;
 if(!ontime&&unfinishedTasks==allTasks.length){resetAllTasks();}
 else{
-statusTasks[index]=0;
+if(done){statusTasks[index]=0;
   document.getElementById('status'+index).textContent = '❄️';
-iniziaTask();}
-
-
+}
+  
+  iniziaTask();}
 }
 
 
