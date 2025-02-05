@@ -21,7 +21,7 @@ getStats(){
 
     inizia() {
        this.mytimer=setTimeout(() => {
-       avvisa(1, false);
+       avvisa(1, false, false);
     }, 5000);
       
      const mydiv=document.getElementById('div1');
@@ -169,7 +169,7 @@ let check=true;
                 }
                 self.stats.valori[2]=self.lvl;
                 self.stats.soldi= self.stats.valori[4]+ self.stats.valori[5];
-         if(ontime) { avvisa(1, ontime);}
+       avvisa(1, ontime,true);
             };
             buttonsContainer.appendChild(button);
            
