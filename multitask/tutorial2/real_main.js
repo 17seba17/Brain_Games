@@ -175,7 +175,8 @@ for (let i = 0; i < allTasks.length; i++) {
 }
 
 
-function avvisa(index, ontime){
+
+function avvisa(index, ontime, done){
   
  
 let unfinishedTasks=0;let money=0;;
@@ -184,16 +185,14 @@ for(let i=0;i<allTasks.length;i++){
   unfinishedTasks+=statusTasks[i];
 }
 document.getElementById('score').innerText = `Score: ${money}`;
-//alert(money);
 if(!ontime&&unfinishedTasks==allTasks.length){resetAllTasks();}
 else{
-statusTasks[index- numbertask]=0;
-  document.getElementById('status'+(index)).textContent = '❄️';
-iniziaTask();}
-
-
+if(done){statusTasks[index-numbertask]=0;
+  document.getElementById('status'+index).textContent = '❄️';
 }
-
+  
+  iniziaTask();}
+}
 
  function showMoney(numero) {
         // Crea un elemento div per il popup
