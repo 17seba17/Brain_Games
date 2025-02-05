@@ -27,10 +27,7 @@
 getStats(){
   return this.stats;
 }
-clear(){
-  const gridContainer = document.getElementById('grid');
-  gridContainer.innerHTML = '';
-}
+
     inizia() {
      // alert(this.stats.nome.length+","+this.stats.valori.length+","+this.stats.unita.length+","+this.stats.colore.length+",");
         //this.intervallo=setTimeout(() => {console.log("Creato timer");}, 0);
