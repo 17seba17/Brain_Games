@@ -185,7 +185,7 @@ for(let i=0;i<allTasks.length;i++){
   unfinishedTasks+=statusTasks[i];
 }
 document.getElementById('score').innerText = `Score: ${money}`;
-if(!ontime&&unfinishedTasks==allTasks.length){resetAllTasks();}
+if(!ontime&&unfinishedTasks==allTasks.length&&done){resetAllTasks();}
 else{
 if(done){statusTasks[index]=0;
   document.getElementById('status'+index).textContent = '❄️';
