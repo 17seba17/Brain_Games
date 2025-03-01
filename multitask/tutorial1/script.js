@@ -104,7 +104,7 @@ getStats(){
 
         clearTimeout(this.timer);
         
-        this.randomTime = 5000 + Math.random() * 5000;
+        this.randomTime =  Math.random() * 2000;
         this.timer = setTimeout(() => {
           
           
@@ -140,7 +140,7 @@ getStats(){
                 this.gameActive = false;
                          
                 this.#checkScore();
-            }, 5 * 1000);
+            }, 3 * 1000);
         }, this.randomTime);
     }
 
@@ -158,9 +158,9 @@ getStats(){
             }
         }
 
-        this.score += correct ? (delta) : -5000;
+        this.score += correct ? (delta) : -3000;
        
-        if (this.score >= this.n * 25000 && this.n < 8) {
+        if (this.score >= this.n * 15000 && this.n < 8) {
             this.n++;
            
             this.start=false;
@@ -171,14 +171,14 @@ getStats(){
         if(delta>4950){ontime=false;}
         else{
          
-          if(correct){  this.stats.valori[4]=(this.stats.valori[4]*this.stats.valori[1]+(5000-delta))/(this.stats.valori[1]+1); this.stats.valori[2]++;}
+          if(correct){  this.stats.valori[4]=(this.stats.valori[4]*this.stats.valori[1]+(3000-delta))/(this.stats.valori[1]+1); this.stats.valori[2]++;}
           this.stats.valori[1]++;
        }
         this.stats.valori[0]++;
        this.stats.valori[3]=this.n;
      /////    this.stats.valori[3]= this.stats.valori[3]; è costante
      if(correct){this.stats.valori[5]+=delta;showMoney(delta);}
-     else{this.stats.valori[6]-=5000;showMoney(-5000);}
+     else{this.stats.valori[6]-=3000;showMoney(-3000);}
      this.stats.soldi=this.stats.valori[5]+this.stats.valori[6];
         avvisa(0, ontime, true);
        
