@@ -46,9 +46,6 @@ document.getElementById('score').innerText = `Score: 0`;
 document.getElementById('startButton').style.display = 'none';
 
 iniziaTask(); 
- setTimeout(() => {
-iniziaTask();
-            }, 5000);
 
 
 
