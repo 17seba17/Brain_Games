@@ -153,9 +153,9 @@ let check=true;
             if(delta>5000){ontime=false;}
               if (this.numerical_answer !== correctAnswer) {
                 let ccc=-5000;
-                if(!ontime){ccc-=(delta-5000);}
-                   self.score-=(ccc);
-                     self.stats.valori[5]+=(ccc);
+                if(!ontime){ccc=-delta;}
+                   self.score+=(ccc);
+                   self.stats.valori[5]+=(ccc);
      showMoney(ccc);
                 }
                 else{
