@@ -2,8 +2,10 @@
 
 const first_task = new FirstTask();
 const second_task = new SecondTask();
+const third_task = new ThirdTask();
 
-let allTasks = [first_task, second_task];
+
+let allTasks = [first_task, second_task, third_task];
 let statusTasks=[];
 
 setup();
@@ -145,12 +147,13 @@ document.getElementById('startButton').style.display = 'inline';
  
  const uno = new FirstTask();
  const due = new SecondTask();
-
+ const tre = new ThirdTask();
+          
  
 for (let i = 0; i < allTasks.length; i++) {
         statusTasks[0]=0;
     }
-  allTasks=[uno, due];
+  allTasks=[uno, due, tre];
             
             
         });
