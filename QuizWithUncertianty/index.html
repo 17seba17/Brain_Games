@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz with Uncertianty</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        #canvas{
+          position:absolute;
+          
+        }
+.container {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    display: block;
+    z-index: 10;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+        
+        h1 {
+            margin: 0 0 20px;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        .question-container {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            font-size: 22px;
+            font-weight: 500;
+        }
+        
+        .input-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        input {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 100px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+        
+        button {
+            background: linear-gradient(45deg, #FF512F, #DD2476);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:active {
+            transform: translateY(-1px);
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+       .feedback {
+    display: block;
+    font-size: 20px;
+ 
+    min-height: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.5s ease;
+}
+        
+        .correct {
+            background-color: rgba(76, 255, 80, 0.5);
+        }
+        
+        .incorrect {
+            background-color: rgba(244, 67, 54, 0.5);
+        }
+        
+        .animated-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 5px;
+           
+
+        }
+    </style>
+</head>
+<body>
+  
+    <div class="animated-background" id="animated-bg"></div>
+        <canvas id="canvas"></canvas>
+
+    <div class="container" id="container">
+        <h1>Quiz con Incertezza</h1>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="score">Punteggio: <span id="score">0</span></div>
+        
+        <div class="question-container" id="question">
+            Caricamento della domanda...
+        </div>
+        
+        <div class="input-group">
+            <div>
+                <label for="answer">La tua risposta:</label>
+                <input type="number" id="answer" placeholder="Risposta">
+            </div>
+            <div>
+                <label for="uncertainty">Incertezza:</label>
+                <input type="number" id="uncertainty" placeholder="±" min="0">
+            </div>
+        </div>
+        
+        <button id="submit-btn">Conferma</button>
+        
+        
+    </div>
+<div class="feedback" id="feedback"></div>
+    <script>
+   
+   function createFireworks(level) {
+    // Shim per requestAnimationFrame
+    const cointainer=document.getElementById("container");
+    container.style.opacity=0;
+    window.requestAnimFrame = (function() {
+        return window.requestAnimationFrame ||
+               window.webkitRequestAnimationFrame ||
+               window.mozRequestAnimationFrame ||
+               function(callback) {
+                   window.setTimeout(callback, 1000 / 60);
+               };
+    })();
+
+    // Impostazione delle variabili di base
+    var canvas = document.getElementById('canvas'),
+        ctx = canvas.getContext('2d'),
+        cw = window.innerWidth,
+        ch = window.innerHeight,
+        fireworks = [],
+        particles = [],
+        hue = 120;
+
+    canvas.width = cw;
+    canvas.height = ch;
+
+    // Funzione per generare numeri casuali
+    function random(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    // Calcolo della distanza tra due punti
+    function calculateDistance(p1x, p1y, p2x, p2y) {
+        var xDistance = p1x - p2x,
+            yDistance = p1y - p2y;
+        return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+    }
+
+    // Classe Firework
+    function Firework(sx, sy, tx, ty) {
+        this.x = sx;
+        this.y = sy;
+        this.sx = sx;
+        this.sy = sy;
+        this.tx = tx;
+        this.ty = ty;
+        this.distanceToTarget = calculateDistance(sx, sy, tx, ty);
+        this.distanceTraveled = 0;
+        this.coordinates = [];
+        this.coordinateCount = 3;
+        while (this.coordinateCount--) {
+            this.coordinates.push([this.x, this.y]);
+        }
+        this.angle = Math.atan2(ty - sy, tx - sx);
+        this.speed = 2;
+        this.acceleration = 1.05;
+        this.brightness = random(50, 70);
+        this.targetRadius = 1;
+    }
+
+    Firework.prototype.update = function(index) {
+        this.coordinates.pop();
+        this.coordinates.unshift([this.x, this.y]);
+        if (this.targetRadius < 8) {
+        } else {
+            this.targetRadius = 1;
+        }
+        this.speed *= this.acceleration;
+        var vx = Math.cos(this.angle) * this.speed,
+            vy = Math.sin(this.angle) * this.speed;
+        this.distanceTraveled = calculateDistance(this.sx, this.sy, this.x + vx, this.y + vy);
+        if (this.distanceTraveled >= this.distanceToTarget) {
+            createParticles(this.tx, this.ty);
+            fireworks.splice(index, 1);
+        } else {
+            this.x += vx;
+            this.y += vy;
+        }
+    };
+
+    Firework.prototype.draw = function() {
+        ctx.beginPath();
+        ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+        ctx.lineTo(this.x, this.y);
+        ctx.strokeStyle = 'hsl(' + hue + ', 100%, ' + this.brightness + '%)';
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(this.tx, this.ty, this.targetRadius, 0, Math.PI * 2);
+        ctx.stroke();
+    };
+
+    // Classe Particle
+    function Particle(x, y) {
+        this.x = x;
+        this.y = y;
+        this.coordinates = [];
+        this.coordinateCount = 5;
+        while (this.coordinateCount--) {
+            this.coordinates.push([this.x, this.y]);
+        }
+        this.angle = random(0, Math.PI * 2);
+        this.speed = random(1, 10);
+        this.friction = 0.95;
+        this.gravity = 1;
+        this.hue = random(hue - 50, hue + 50);
+        this.brightness = random(50, 80);
+        this.alpha = 1;
+        this.decay = random(0.015, 0.03);
+    }
+
+    Particle.prototype.update = function(index) {
+        this.coordinates.pop();
+        this.coordinates.unshift([this.x, this.y]);
+        this.speed *= this.friction;
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed + this.gravity;
+        this.alpha -= this.decay;
+        if (this.alpha <= this.decay) {
+            particles.splice(index, 1);
+        }
+    };
+
+    Particle.prototype.draw = function() {
+        ctx.beginPath();
+        ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+        ctx.lineTo(this.x, this.y);
+        ctx.strokeStyle = 'hsla(' + this.hue + ', 100%, ' + this.brightness + '%, ' + this.alpha + ')';
+        ctx.stroke();
+    };
+
+    // Creazione di un gruppo di particelle
+    function createParticles(x, y) {
+     
+        var particleCount = 30;
+        while (particleCount--) {
+            particles.push(new Particle(x, y));
+        }
+    }
+
+    // Creazione dei fuochi d'artificio e logica di animazione
+    fireworks = [];
+    particles = [];
+
+    // Numero di fuochi d'artificio
+    const numFireworks = 50;
+    for (let i = 0; i < numFireworks; i++) {
+        const sx = random(0, cw);
+        const sy = ch;
+        const tx = random(0, cw);
+        const ty = random(0, ch / 2);
+        fireworks.push(new Firework(sx, sy, tx, ty));
+    }
+
+    // Testo animato
+    const text = `Hai raggiunto il livello ${level}!`;
+    let textAlpha = 0;
+    const textFadeInDuration = 1000; // 1s fade-in
+    const textDisplayDuration = 1000; // 3s visualizzazione
+    const textFadeOutDuration = 1000; // 1s fade-out
+    const totalAnimationTime = 3000; // 5s totali
+
+function drawText() {let radius=300; let startAngle=Math.PI;
+ 
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.font = 'bold 48px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    ctx.shadowColor = `hsl(${hue}, 100%, 50%, ${textAlpha})`; // Colore dell'ombra
+ctx.shadowBlur = 40; // Sfocatura dell'ombra
+ctx.shadowOffsetX = 2; // Spostamento orizzontale dell'ombra
+ctx.shadowOffsetY = 2;
+    
+    
+    ctx.fillStyle = `rgba(255,255,255,${textAlpha})`;
+
+    // Calcola la posizione di ogni carattere lungo l'arco
+    const angleIncrement = (Math.PI / (text.length-1)); // Spaziatura angolare
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const angle = startAngle + (i * angleIncrement); // Angolo per il carattere
+
+        // Calcola la posizione x e y
+        const x = cw / 2 + radius * Math.cos(angle);
+        const y = ch / 2 + radius * Math.sin(angle);
+
+        // Ruota il contesto per allineare il testo lungo l'arco
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle + Math.PI / 2); // Ruota per allineare il testo
+        ctx.fillText(char, 0, 0);
+        ctx.restore();
+    }
+
+    ctx.restore();
+}
+
+
+
+    let startTime = Date.now();
+animationLoop();
+    function animationLoop() {
+     
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - startTime;
+
+        if (elapsedTime < totalAnimationTime) {
+            requestAnimFrame(animationLoop);
+        } else {
+          
+          container.style.opacity=1;
+          updateProgressBar();
+            return;
+        }
+
+        // Gestione dell'alpha del testo
+        if (elapsedTime < textFadeInDuration) {
+            textAlpha = elapsedTime / textFadeInDuration;
+        } else if (elapsedTime < textFadeInDuration + textDisplayDuration) {
+            textAlpha = 1;
+        } else {
+            const fadeOutTime = elapsedTime - (textFadeInDuration + textDisplayDuration);
+            textAlpha = 1 - (fadeOutTime / textFadeOutDuration);
+            
+        }
+
+        // Pulizia del canvas con effetto di scia
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(0, 0, cw, ch);
+        ctx.globalCompositeOperation = 'lighter';
+
+        // Disegno e aggiornamento dei fuochi d'artificio
+        let i = fireworks.length;
+        while (i--) {
+            fireworks[i].draw();
+            fireworks[i].update(i);
+        }
+
+        // Disegno e aggiornamento delle particelle
+        i = particles.length;
+        while (i--) {
+            particles[i].draw();
+            particles[i].update(i);
+        }
+
+        // Disegno del testo
+        drawText();
+
+        // Aggiornamento del colore
+        hue = random(0, 360);
+
+    }
+
+  
+}
+
+
+//////createFireworks
+        
+        
+          const questions = [
+            { question: "Quanti sono i re di Roma?", answer: 7 },
+            { question: "In che anno Cristoforo Colombo scoprì l'America?", answer: 1492 },
+            { question: "Quanti sono i pianeti del sistema solare?", answer: 8 },
+            { question: "Quanti lati ha un esagono?", answer: 6 },
+            { question: "Qual è la temperatura di ebollizione dell'acqua in gradi Celsius?", answer: 100 },
+            { question: "Quanti sono gli elementi chimici nella tavola periodica moderna?", answer: 118 },
+            { question: "In che anno è iniziata la Prima Guerra Mondiale?", answer: 1914 },
+            { question: "Qual è la velocità della luce approssimata in km/s?", answer: 299792  },
+            { question: "Quante ossa ha il corpo umano adulto?", answer: 206 },
+            { question: "In che anno l'Italia è diventata una Repubblica?", answer: 1946 }
+        ];
+        
+        let currentQuestion;
+        let score = 0;
+        let level=0;
+        let questionCounter = 0;
+        const totalQuestions = questions.length;
+        
+        // Elementi DOM
+        const questionElement = document.getElementById('question');
+        const answerInput = document.getElementById('answer');
+        const uncertaintyInput = document.getElementById('uncertainty');
+        const submitButton = document.getElementById('submit-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const scoreElement = document.getElementById('score');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // Crea le bolle animate sullo sfondo
+        
+        
+        function createBubbles() {
+            const animatedBg = document.getElementById('animated-bg');
+            const bubbleCount = 15;
+            
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                // Dimensioni casuali
+                const size = Math.random() * 100 + 50;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                // Posizione casuale
+                bubble.style.left = `${Math.random() * 100}%`;
+                
+                // Ritardo casuale
+                const delay = Math.random() * 15;
+                bubble.style.animationDelay = `${delay}s`;
+                
+                // Durata casuale
+                const duration = Math.random() * 10 + 10;
+                bubble.style.animationDuration = `${duration}s`;
+                
+                animatedBg.appendChild(bubble);
+            }
+        }
+        
+        // Funzione per ottenere una domanda casuale
+        function getRandomQuestion() {
+            
+            currentQuestion = questions[Math.floor(Math.random()*totalQuestions)];
+           
+            questionElement.textContent = currentQuestion.question;
+            
+
+            updateProgressBar();////da cambiare
+            
+            // Resetta gli input e il feedback
+            answerInput.value = '';
+            uncertaintyInput.value = '';
+            
+            
+            
+clearFeedback();
+
+            
+          
+            answerInput.focus();
+        }
+        function clearFeedback(){
+                    setTimeout(function() {
+    feedbackElement.textContent = '';
+    feedbackElement.className = 'feedback';
+}, 4000);
+        }
+        
+        
+        
+        // Funzione per verificare la risposta
+        function checkAnswer() {
+          
+            // Ottieni i valori inseriti dall'utente
+            const userAnswer = parseFloat(answerInput.value);
+            const uncertainty = parseFloat(uncertaintyInput.value);
+            
+            // Verifica che entrambi i campi siano compilati e validi
+            if (isNaN(userAnswer) || isNaN(uncertainty) || uncertainty < 0) {
+                feedbackElement.textContent = "Inserisci valori validi per risposta e incertezza!";
+                feedbackElement.className = 'feedback incorrect';
+                clearFeedback();
+                return;
+            }
+            
+
+            const correctAnswer = currentQuestion.answer;
+            
+
+            let a=1-erf(uncertainty / userAnswer);
+            let h;
+            if(userAnswer==correctAnswer){h=erf(1/Math.sqrt(2))}
+           else{h=calculateH(correctAnswer, uncertainty, userAnswer);}
+            
+            const s=100*(2*((a*h)/(erf(1/Math.sqrt(2))))-1);
+           
+              score+=Math.round(s);
+              
+               feedbackElement.textContent = `Hai otteuto ${Math.round(s)} punti! La risposta esatta è ${correctAnswer}.`;
+              if(s<0){ feedbackElement.className = 'feedback incorrect';}
+              if(s>0){ feedbackElement.className = 'feedback correct';}
+              
+              if(score<0){score=0;}
+                              scoreElement.textContent = score;
+
+            getRandomQuestion();
+            
+          
+           
+        }
+        
+        
+        function erf(x)
+        {
+    // Coefficienti per la serie di Taylor
+    const a1 =  0.254829592;
+    const a2 = -0.284496736;
+    const a3 =  1.421413741;
+    const a4 = -1.453152027;
+    const a5 =  1.061405429;
+    const p  =  0.3275911;
+
+    // Segno della variabile
+    const sign = (x >= 0) ? 1 : -1;
+    x = Math.abs(x);
+
+    // Calcolo della funzione di errore
+    const t = 1.0 / (1.0 + p * x);
+   const y = 1.0 - ((((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t) * Math.exp(-x * x);
+    return sign * y;
+}
+
+
+function gaussian(x, x0, beta) {
+    return (1 / Math.sqrt(2 * Math.PI * beta * beta)) * Math.exp(-((x - x0) ** 2) / (2 * beta * beta));
+}
+
+// Funzione per calcolare l'integrale usando il metodo dei trapezi
+function trapezoidalIntegration(func, a, b, x0, beta, n) {
+    const h = (b - a) / n; // Larghezza del passo
+    let sum = 0.5 * (func(a, x0, beta) + func(b, x0, beta)); // Inizializza la somma
+
+    for (let i = 1; i < n; i++) {
+        const x = a + i * h;
+        sum += func(x, x0, beta);
+    }
+
+    return sum * h; // Restituisce l'integrale
+}
+
+// Funzione principale per calcolare h
+function calculateH(m, beta, x0) {
+  const n=1000;
+    const a = m - beta; // Limite inferiore
+    const b = m + beta; // Limite superiore
+    return trapezoidalIntegration(gaussian, a, b, x0, beta, n);
+}
+
+
+
+        
+        // Aggiorna la barra di progresso
+        function updateProgressBar() {
+            const progressPercentage = ((score/100) / Math.pow(3, level)) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            if(((score/100) / Math.pow(3, level))>=1){
+             level++;
+              setTimeout(() => { createFireworks(level); }, 500);
+             
+            }
+            
+        }
+        
+        // Fine del gioco
+        function endGame() {
+            questionElement.textContent = "Quiz completato!";
+            answerInput.disabled = true;
+            uncertaintyInput.disabled = true;
+            submitButton.disabled = true;
+            
+            feedbackElement.textContent = `Hai totalizzato ${score} punti su ${totalQuestions} domande!`;
+            feedbackElement.className = 'feedback ' + (score >= totalQuestions/2 ? 'correct' : 'incorrect');
+            
+            // Aggiungi pulsante per ricominciare
+            const restartBtn = document.createElement('button');
+            restartBtn.textContent = "Ricomincia";
+            restartBtn.addEventListener('click', () => {
+                resetGame();
+            });
+            document.querySelector('.container').appendChild(restartBtn);
+        }
+        
+        // Resetta il gioco
+        function resetGame() {
+            // Resetta i contatori
+            score = 0;
+            questionCounter = 0;
+            scoreElement.textContent = score;
+            
+            // Resetta le domande usate
+            questions.forEach(q => q.used = false);
+            
+            // Riabilita gli input
+            answerInput.disabled = false;
+            uncertaintyInput.disabled = false;
+            submitButton.disabled = false;
+            
+            // Rimuovi il pulsante di riavvio se esiste
+            const restartBtn = document.querySelector('.container button:last-child');
+            if (restartBtn && restartBtn !== submitButton) {
+                restartBtn.remove();
+            }
+            
+            // Inizia una nuova partita
+            getRandomQuestion();
+        }
+        
+        // Event listeners
+        submitButton.addEventListener('click', checkAnswer);
+        
+        // Consenti anche di premere "Invio" per inviare la risposta
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              if(  document.activeElement === answerInput){
+                uncertaintyInput.focus();
+              }
+              else if(document.activeElement === uncertaintyInput){
+                checkAnswer();}
+            }
+        });
+        
+        // Inizializza il gioco
+     
+     window.onload = function() {
+       createBubbles();
+       getRandomQuestion();
+    //a i fuochi per il livello 5
+  
+    
+};
+     
+     
+        </script>
+</body>
+</html>
